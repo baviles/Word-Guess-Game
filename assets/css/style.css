@@ -1,0 +1,17 @@
+body {
+    font-family: 'Staatliches', cursive;
+   padding: 150px;
+   color: black;
+   background-image: url("../images/SLC.jpeg");
+   background-repeat: no-repeat;
+   background-size: cover;
+   font-size: 30px;
+}
+
+.container { 
+    text-align: center;
+}
+
+.currentWord {
+    letter-spacing: 10px;
+}
