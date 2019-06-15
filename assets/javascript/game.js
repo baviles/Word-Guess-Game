@@ -1,86 +1,138 @@
-//Variables
+$(document).ready(function() {
 
-let possibleWords = [ 
-"murray",
-"taylorsville",
-"millcreek",
-"herriman",
-"sandy",
-"riverton",
-"kearns",
-"magna"]
+  var possibleWords = ["murray",
+  "taylorsville",
+  "millcreek",
+  "herriman",
+  "sandy",
+  "riverton",
+  "kearns",
+  "magna"]
 
 
-//Empty variables to store variables 
-let currentWord = 'taylorsville'
-let wins = 0
-let guessesRemaining = 11
-let lettersGuessed = []
 
-//All functions
-function initGame() {
-  assignCurrentWord()
-  setEventListeners()
-  updateDOM()
+const maxTries = 10;            
+
+var guessedLetters = [];        
+var currentWordIndex;           
+var guessingWord = [];          
+var remainingGuesses = 0;       
+var gameStarted = false;        
+var hasFinished = false;             
+var wins = 0;                   
+
+
+
+
+
+function resetGame() {
+remainingGuesses = maxTries;
+gameStarted = false;
+
+
+currentWordIndex = Math.floor(Math.random() * (possibleWords.length));
+
+
+guessedLetters = [];
+guessingWord = [];
+
+
+
+
+
+for (var i = 0; i < possibleWords[currentWordIndex].length; i++) {
+    guessingWord.push("_");
+    console.log(guessingWord);
 }
-initGame()
-function wordHasBeenGuessed(){
-  for(let i=0; i<currentWord.length; i++){
-    if(lettersGuessed.includes(currentWord[i])){
-      
-    } else {
-      return false
+
+updateDisplay();
+};
+
+
+
+function updateDisplay() {
+
+document.getElementById("totalWins").innerText = wins;
+document.getElementById("currentWord").innerText = "";
+for (var i = 0; i < guessingWord.length; i++) {
+    document.getElementById("currentWord").innerText += guessingWord[i];
+    console.log(guessingWord[i]);
+}
+document.getElementById("remainingGuesses").innerText = remainingGuesses;
+document.getElementById("guessedLetters").innerText = guessedLetters;
+if(remainingGuesses <= 0) {
+    document.getElementById("youLose")
+    document.getElementById("tryAgain")    
+    hasFinished = true;
+}
+};
+
+
+
+
+document.onkeydown = function(event) {
+
+if(hasFinished) {
+    resetGame();
+    hasFinished = false;
+} else {
+   
+    if(event.keyCode >= 65 && event.keyCode <= 90) {
+        makeGuess(event.key.toLowerCase());
     }
-  }
-  return true
 }
+};
 
-//Generates random word from posibleWords array
-function assignCurrentWord() {
-  const index = Math.floor(Math.random() * ((possibleWords.length -1) - 0 + 1)) + 0;
-  currentWord = possibleWords[index]
-}
-function setEventListeners(){
-  document.onkeyup = function(e){
-    lettersGuessed.push(e.key)
-    if(wordHasBeenGuessed()){
-      initGame()
-      wins++
-      document.getElementById("wins-count").textContent = wins
+
+function makeGuess(letter) {
+if (remainingGuesses > 0) {
+    if (!gameStarted) {
+        gameStarted = true;
+        
     }
-    shouldGuessesGoDown(e.key)
-    console.log(currentWord, lettersGuessed, guessesRemaining)
-    updateDOM()
-    checkIfUserLost()
-  }
-}
-function checkIfUserLost(){
-  if(guessesRemaining <= 0){
-    alert('you lost')
-  }
-}
-function shouldGuessesGoDown(letterGuessed){
-  if(!currentWord.includes(letterGuessed)){
-    guessesRemaining = guessesRemaining - 1
-  }
-}
-function updateDOM(){
-  document.getElementById("guessesRemaining").innerHTML = guessesRemaining
-  document.getElementById("letters-guessed").innerHTML = lettersGuessed
-  showLettersOrDashes()
-}
-function showLettersOrDashes() {
-  let displayWord = ''
-  for(let i=0; i<currentWord.length; i++){
-    if(lettersGuessed.includes(currentWord[i])){
-      displayWord = displayWord + currentWord[i] + ' '
-    } else {
-      displayWord = displayWord + '_' + ' '
+
+    
+    if (guessedLetters.indexOf(letter) === -1) {
+        guessedLetters.push(letter);
+        evaluateGuess(letter);
     }
-  }
-  document.getElementById("display-word").textContent = displayWord
+}
+
+updateDisplay();
+checkWin();
+};
+
+
+function evaluateGuess(letter) {
+
+var positions = [];
+
+
+for (var i = 0; i < possibleWords[currentWordIndex].length; i++) {
+    if(possibleWords[currentWordIndex][i] === letter) {
+        positions.push(i);
+        console.log(possibleWords[currentWordIndex[i]]);
+    }
 }
 
 
+if (positions.length <= 0) {
+    remainingGuesses--;
+    
+} else {
+    
+    for(var i = 0; i < positions.length; i++) {
+        guessingWord[positions[i]] = letter;
+        
+    }
+}
+};
 
-
+function checkWin() {
+if(guessingWord.indexOf("_") === -1) {
+    document.getElementById("youwin")
+    document.getElementById("tryAgain")    
+    wins++;
+    hasFinished = true;
+}
+}});
